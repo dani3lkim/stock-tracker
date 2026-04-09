@@ -14,30 +14,31 @@ with st.expander("Add Position"):
     with st.form("add_position"):
         c1, c2, c3 = st.columns(3)
         with c1:
-            p_ticker = st.text_input("Ticker *").upper().strip()
+            p_ticker = st.text_input("Ticker *")
         with c2:
             p_shares = st.number_input("Shares *", min_value=0.0, step=1.0, format="%.4f")
         with c3:
             p_price = st.number_input("Buy Price ($) *", min_value=0.0, step=0.01, format="%.2f")
         submitted = st.form_submit_button("Add Position")
 
-        if submitted:
-            errors = []
-            if not p_ticker:
-                errors.append("**Ticker** is required.")
-            elif len(p_ticker) > 10:
-                errors.append("**Ticker** must be 10 characters or fewer.")
-            if p_shares <= 0:
-                errors.append("**Shares** must be a positive number.")
-            if p_price <= 0:
-                errors.append("**Buy Price** must be a positive number.")
-            if errors:
-                for e in errors:
-                    st.error(e)
-            else:
-                add_position(p_ticker, p_shares, p_price)
-                st.success(f"Position in {p_ticker} added.")
-                st.rerun()
+if submitted:
+    p_ticker = p_ticker.upper().strip()
+    errors = []
+    if not p_ticker:
+        errors.append("**Ticker** is required.")
+    elif len(p_ticker) > 10:
+        errors.append("**Ticker** must be 10 characters or fewer.")
+    if p_shares <= 0:
+        errors.append("**Shares** must be a positive number.")
+    if p_price <= 0:
+        errors.append("**Buy Price** must be a positive number.")
+    if errors:
+        for e in errors:
+            st.error(e)
+    else:
+        add_position(p_ticker, p_shares, p_price)
+        st.success(f"Position in {p_ticker} added.")
+        st.rerun()
 
 st.divider()
 
@@ -123,19 +124,19 @@ else:
             )
         edit_submitted = st.form_submit_button("Save Changes")
 
-        if edit_submitted:
-            errors = []
-            if new_shares <= 0:
-                errors.append("**Shares** must be a positive number.")
-            if new_price <= 0:
-                errors.append("**Buy Price** must be a positive number.")
-            if errors:
-                for e in errors:
-                    st.error(e)
-            else:
-                update_position(selected_pos["id"], new_shares, new_price)
-                st.success("Position updated.")
-                st.rerun()
+    if edit_submitted:
+        errors = []
+        if new_shares <= 0:
+            errors.append("**Shares** must be a positive number.")
+        if new_price <= 0:
+            errors.append("**Buy Price** must be a positive number.")
+        if errors:
+            for e in errors:
+                st.error(e)
+        else:
+            update_position(selected_pos["id"], new_shares, new_price)
+            st.success("Position updated.")
+            st.rerun()
 
     st.divider()
 

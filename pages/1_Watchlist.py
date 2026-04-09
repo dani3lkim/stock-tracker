@@ -14,24 +14,26 @@ st.title("Watchlist")
 
 # --- Add Stock ---
 with st.form("add_stock"):
-    new_ticker = st.text_input("Ticker Symbol *", placeholder="e.g. AAPL").upper().strip()
+    new_ticker = st.text_input("Ticker Symbol *", placeholder="e.g. AAPL")
     submitted = st.form_submit_button("Add to Watchlist")
-    if submitted:
-        errors = []
-        if not new_ticker:
-            errors.append("**Ticker** is required.")
-        elif len(new_ticker) > 10:
-            errors.append("**Ticker** must be 10 characters or fewer.")
-        if errors:
-            for e in errors:
-                st.error(e)
+
+if submitted:
+    new_ticker = new_ticker.upper().strip()
+    errors = []
+    if not new_ticker:
+        errors.append("**Ticker** is required.")
+    elif len(new_ticker) > 10:
+        errors.append("**Ticker** must be 10 characters or fewer.")
+    if errors:
+        for e in errors:
+            st.error(e)
+    else:
+        stock_id = add_stock(new_ticker)
+        if stock_id:
+            st.success(f"{new_ticker} added to watchlist.")
         else:
-            stock_id = add_stock(new_ticker)
-            if stock_id:
-                st.success(f"{new_ticker} added to watchlist.")
-            else:
-                st.warning(f"{new_ticker} is already on your watchlist.")
-            st.rerun()
+            st.warning(f"{new_ticker} is already on your watchlist.")
+        st.rerun()
 
 st.divider()
 
