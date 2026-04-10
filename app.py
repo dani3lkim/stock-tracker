@@ -38,33 +38,40 @@ st.divider()
 
 st.subheader("Watchlist")
 import pandas as pd
+
+def fmt(val):
+    return f"${val:.2f}" if val is not None else "N/A"
+
 rows = get_stocks_with_tags()
 if rows:
     table = []
     for r in rows:
         try:
             info = yf.Ticker(r["ticker"]).fast_info
-            change = info.last_price - info.previous_close
-            change_pct = (change / info.previous_close) * 100
+            price = info.last_price
+            prev = info.previous_close
+            if price is not None and prev is not None and prev != 0:
+                change = price - prev
+                change_pct = (change / prev) * 100
+                change_str = f"${change:+.2f} ({change_pct:+.1f}%)"
+            else:
+                change_str = "N/A"
             table.append({
                 "Ticker": r["ticker"],
-                "Price": f"${info.last_price:.2f}",
-                "Change": f"${change:+.2f} ({change_pct:+.1f}%)",
-                "Day High": f"${info.day_high:.2f}",
-                "Day Low": f"${info.day_low:.2f}",
-                "52W High": f"${info.fifty_two_week_high:.2f}",
-                "52W Low": f"${info.fifty_two_week_low:.2f}",
+                "Price": fmt(price),
+                "Change": change_str,
+                "Day High": fmt(info.day_high),
+                "Day Low": fmt(info.day_low),
+                "52W High": fmt(info.fifty_two_week_high),
+                "52W Low": fmt(info.fifty_two_week_low),
                 "Tags": r["tags"] or "",
             })
         except Exception:
             table.append({
                 "Ticker": r["ticker"],
-                "Price": "N/A",
-                "Change": "-",
-                "Day High": "-",
-                "Day Low": "-",
-                "52W High": "-",
-                "52W Low": "-",
+                "Price": "N/A", "Change": "-",
+                "Day High": "-", "Day Low": "-",
+                "52W High": "-", "52W Low": "-",
                 "Tags": r["tags"] or "",
             })
     st.dataframe(pd.DataFrame(table), use_container_width=True, hide_index=True)

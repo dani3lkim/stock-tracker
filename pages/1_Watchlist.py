@@ -53,6 +53,9 @@ if search.strip():
 if not stocks_with_tags:
     st.info("No stocks match your search." if search.strip() else "No stocks on your watchlist yet.")
 else:
+    def fmt(val):
+        return f"${val:.2f}" if val is not None else "N/A"
+
     # Price table
     rows = []
     for row in stocks_with_tags:
@@ -61,11 +64,11 @@ else:
             rows.append({
                 "Ticker": row["ticker"],
                 "Tags": row["tags"] or "",
-                "Price": f"${info.last_price:.2f}",
-                "Day High": f"${info.day_high:.2f}",
-                "Day Low": f"${info.day_low:.2f}",
-                "52W High": f"${info.fifty_two_week_high:.2f}",
-                "52W Low": f"${info.fifty_two_week_low:.2f}",
+                "Price": fmt(info.last_price),
+                "Day High": fmt(info.day_high),
+                "Day Low": fmt(info.day_low),
+                "52W High": fmt(info.fifty_two_week_high),
+                "52W Low": fmt(info.fifty_two_week_low),
             })
         except Exception:
             rows.append({
