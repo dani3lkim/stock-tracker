@@ -1,12 +1,72 @@
 import streamlit as st
 import yfinance as yf
-from db import init_db, get_counts, get_stocks_with_tags, get_portfolio
+import pandas as pd
+from db import init_db, get_counts, get_stocks_with_tags, get_portfolio, get_tracked_stocks
 
 st.set_page_config(page_title="Stock Tracker", layout="wide")
 init_db()
 
 st.title("Stock Tracker — Dashboard")
 
+# --- Live Ticker Tape ---
+@st.fragment(run_every=30)
+def ticker_tape():
+    tickers = get_tracked_stocks()
+    if not tickers:
+        return
+    items = []
+    for t in tickers:
+        try:
+            hist = yf.Ticker(t["ticker"]).history(period="2d")
+            if not hist.empty and len(hist) >= 2:
+                price = hist["Close"].iloc[-1]
+                prev = hist["Close"].iloc[-2]
+                change_pct = ((price - prev) / prev) * 100
+                color = "#00cc66" if change_pct >= 0 else "#ff4444"
+                arrow = "▲" if change_pct >= 0 else "▼"
+                items.append(
+                    f'<span style="margin:0 24px; color:white; font-weight:bold;">'
+                    f'{t["ticker"]} '
+                    f'<span style="color:{color};">${price:.2f} {arrow}{abs(change_pct):.2f}%</span>'
+                    f'</span>'
+                )
+        except Exception:
+            pass
+
+    if not items:
+        return
+
+    content = "".join(items * 3)
+    st.markdown(f"""
+    <div style="
+        background:#1a1a2e;
+        border:1px solid #333;
+        border-radius:6px;
+        padding:10px 0;
+        overflow:hidden;
+        white-space:nowrap;
+        margin-bottom:16px;
+    ">
+        <div style="
+            display:inline-block;
+            animation:ticker 20s linear infinite;
+            font-size:14px;
+            font-family:monospace;
+        ">
+            {content}
+        </div>
+    </div>
+    <style>
+        @keyframes ticker {{
+            0%   {{ transform: translateX(0); }}
+            100% {{ transform: translateX(-33.33%); }}
+        }}
+    </style>
+    """, unsafe_allow_html=True)
+
+ticker_tape()
+
+# --- Metrics ---
 stock_count, position_count, tag_count = get_counts()
 
 m1, m2, m3, m4 = st.columns(4)
@@ -14,7 +74,6 @@ m1.metric("Watchlist Stocks", stock_count)
 m2.metric("Portfolio Positions", position_count)
 m3.metric("Tags", tag_count)
 
-# Compute total portfolio value
 positions = get_portfolio()
 total_value = 0.0
 total_cost = 0.0
@@ -30,16 +89,12 @@ for pos in positions:
 
 gain = total_value - total_cost
 gain_pct = (gain / total_cost * 100) if total_cost else 0
-m4.metric(
-    "Portfolio Value",
-    f"${total_value:,.2f}",
-    f"{gain_pct:+.1f}%"
-)
+m4.metric("Portfolio Value", f"${total_value:,.2f}", f"{gain_pct:+.1f}%")
 
 st.divider()
 
+# --- Watchlist Table ---
 st.subheader("Watchlist")
-import pandas as pd
 
 def get_price_row(ticker, tags):
     try:
