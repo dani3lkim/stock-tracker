@@ -4,7 +4,7 @@ A personal stock tracking web application built with Streamlit and PostgreSQL. U
 
 ## Live App
 
-[stock-tracker on Streamlit Community Cloud](https://dani3lkim-stock-tracker.streamlit.app)
+[stock-tracker on Streamlit Community Cloud](https://qtces5wapkujiobr7ltyng.streamlit.app/)
 
 ## ERD
 
