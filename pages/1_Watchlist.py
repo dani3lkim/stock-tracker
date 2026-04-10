@@ -53,22 +53,26 @@ if search.strip():
 if not stocks_with_tags:
     st.info("No stocks match your search." if search.strip() else "No stocks on your watchlist yet.")
 else:
-    def fmt(val):
-        return f"${val:.2f}" if val is not None else "N/A"
-
     # Price table
     rows = []
     for row in stocks_with_tags:
         try:
-            info = yf.Ticker(row["ticker"]).fast_info
+            hist = yf.Ticker(row["ticker"]).history(period="1y")
+            if hist.empty:
+                raise ValueError("No data")
+            price = hist["Close"].iloc[-1]
+            day_high = hist["High"].iloc[-1]
+            day_low = hist["Low"].iloc[-1]
+            high_52w = hist["High"].max()
+            low_52w = hist["Low"].min()
             rows.append({
                 "Ticker": row["ticker"],
                 "Tags": row["tags"] or "",
-                "Price": fmt(info.last_price),
-                "Day High": fmt(info.day_high),
-                "Day Low": fmt(info.day_low),
-                "52W High": fmt(info.fifty_two_week_high),
-                "52W Low": fmt(info.fifty_two_week_low),
+                "Price": f"${price:.2f}",
+                "Day High": f"${day_high:.2f}",
+                "Day Low": f"${day_low:.2f}",
+                "52W High": f"${high_52w:.2f}",
+                "52W Low": f"${low_52w:.2f}",
             })
         except Exception:
             rows.append({

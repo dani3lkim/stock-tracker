@@ -58,7 +58,10 @@ else:
     total_cost = 0.0
     for pos in positions:
         try:
-            current_price = yf.Ticker(pos["ticker"]).fast_info.last_price
+            hist = yf.Ticker(pos["ticker"]).history(period="1d")
+            current_price = hist["Close"].iloc[-1] if not hist.empty else None
+            if current_price is None:
+                raise ValueError("No price")
             cost = float(pos["shares"]) * float(pos["buy_price"])
             value = float(pos["shares"]) * current_price
             gain = value - cost
