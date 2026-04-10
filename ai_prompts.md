@@ -70,24 +70,6 @@ Claude moved all `if submitted:` validation and success/error logic to outside t
 
 ---
 
-## Prompt 5 — Design Documents & README
-
-**Prompt:**
-> yes (write the design documents and README)
-
-**What Claude generated:**
-- System description paragraph
-- Entity list with all 4 tables, columns, types, and constraints
-- Relationships description
-- Page-by-page plan for all 4 pages
-- Validation rules for all forms
-- dbdiagram.io ERD code (diagram was drawn manually by student)
-- Full README.md with table descriptions, setup instructions, and live URL
-
-**What worked:** All documents generated accurately on first try, matching the actual app schema.
-
----
-
 ## Summary: What the LLM Got Right vs. What Needed Fixing
 
 | Area | Result |

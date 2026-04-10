@@ -37,10 +37,36 @@ m4.metric(
 st.divider()
 
 st.subheader("Watchlist")
+import pandas as pd
 rows = get_stocks_with_tags()
 if rows:
-    import pandas as pd
-    df = pd.DataFrame([{"Ticker": r["ticker"], "Tags": r["tags"] or ""} for r in rows])
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    table = []
+    for r in rows:
+        try:
+            info = yf.Ticker(r["ticker"]).fast_info
+            change = info.last_price - info.previous_close
+            change_pct = (change / info.previous_close) * 100
+            table.append({
+                "Ticker": r["ticker"],
+                "Price": f"${info.last_price:.2f}",
+                "Change": f"${change:+.2f} ({change_pct:+.1f}%)",
+                "Day High": f"${info.day_high:.2f}",
+                "Day Low": f"${info.day_low:.2f}",
+                "52W High": f"${info.fifty_two_week_high:.2f}",
+                "52W Low": f"${info.fifty_two_week_low:.2f}",
+                "Tags": r["tags"] or "",
+            })
+        except Exception:
+            table.append({
+                "Ticker": r["ticker"],
+                "Price": "N/A",
+                "Change": "-",
+                "Day High": "-",
+                "Day Low": "-",
+                "52W High": "-",
+                "52W Low": "-",
+                "Tags": r["tags"] or "",
+            })
+    st.dataframe(pd.DataFrame(table), use_container_width=True, hide_index=True)
 else:
     st.info("No stocks on watchlist yet.")

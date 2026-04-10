@@ -30,29 +30,29 @@ This system is a personal stock tracking application designed for individual inv
 ## 4. Page-by-Page Plan
 
 **Dashboard (app.py)**
-Shows 4 live metrics: total watchlist stocks, total portfolio positions, total tags, and total portfolio value with gain/loss percentage. Displays a table of all watchlist stocks with their assigned tags.
+Shows 4 live metrics at the top: total watchlist stocks, total portfolio positions, total tags, and total portfolio value with overall gain/loss percentage. Below the metrics, displays a full live price table of all watchlist stocks showing ticker, current price, day change ($ and %), day high, day low, 52-week high, 52-week low, and assigned tags.
 
 **Watchlist (pages/1_Watchlist.py)**
-- Form to add a new ticker to the watchlist
-- Search/filter bar to narrow stocks by ticker or tag name
-- Table showing live price, day high/low, 52-week high/low, and tags for each stock
-- Tag assignment section: select a stock, pick tags from a multiselect (pulled from tags table), save
-- Price chart with selectable time period (1mo to 5y)
-- Delete with confirmation step
+- Form at the top to add a new ticker symbol to the watchlist
+- Search/filter bar to narrow the list by ticker or tag name
+- Live price table showing ticker, tags, current price, day high, day low, 52-week high, and 52-week low for each stock
+- Tag assignment section: select a stock from a dropdown, pick tags from a multiselect (options pulled from the tags table), click Save Tags
+- Price chart: select a ticker and a time period (1mo, 3mo, 6mo, 1y, 2y, 5y) to view a closing price line chart
+- Remove section: select a ticker from a dropdown, click Remove, confirm before deletion
 
 **Portfolio (pages/2_Portfolio.py)**
-- Expandable form to add a new position (ticker, shares, buy price)
+- Expandable "Add Position" section with a form for ticker, number of shares, and buy price per share
 - Search bar to filter positions by ticker
-- Table showing each position's current price, total value, and gain/loss
-- Summary metrics: total portfolio value, cost basis, and overall gain/loss
-- Edit form pre-filled with current shares and buy price
-- Delete with confirmation step
+- Table showing each position: ticker, shares, buy price, current price, total current value, and gain/loss ($ and %)
+- Summary metrics below the table: total portfolio value, total cost basis, total gain/loss ($ and %)
+- Edit Position section: select a position from a dropdown, edit shares and buy price in a pre-filled form, save changes
+- Delete Position section: select a position, click Delete, confirm before deletion
 
 **Tags (pages/3_Tags.py)**
-- Form to add a new tag
+- Form to add a new tag by name
 - Table showing all existing tags
-- Selectbox to choose a tag to rename, with an edit form
-- Selectbox to choose a tag to delete, with a confirmation step
+- Edit section: select a tag from a dropdown, enter a new name in a form, click Rename
+- Delete section: select a tag from a dropdown, click Delete Tag, confirm before deletion (deleting a tag removes it from all stocks automatically)
 
 ---
 
